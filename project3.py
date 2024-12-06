@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import imageio as io
+import imageio.v3 as io # using v3 in consideration of deprecation warning
 import os
 
 # Notes for ourselves:
@@ -11,7 +11,7 @@ import os
 
 
 # 1 TODO: Download dataset & load training dataset
-
+# DONE (X vs img_matrix needs scrutiny)
 entities = ['centerlight', 'glasses', 'happy', 'leftlight', 'noglasses', 
             'normal', 'rightlight', 'sad', 'sleepy', 'surprised', 'wink']
 
@@ -27,7 +27,7 @@ X = np.zeros((img_size, num_img_total)) # M x N
 
 imgs = []
 for img in os.listdir('./unpadded'):
-    if not(img.startswith('subject14') or img.startswith('subject15')):
+    if not(img.startswith('subject14') or img.startswith('subject15')): # only use 1st 13 for training
         imgs.append(img)
 imgs.sort()
 # for i in imgs:
@@ -38,10 +38,17 @@ for idx, img in enumerate(imgs):
     X[:, idx] = face.flatten()
 # print(X[0])
 
+# check if total # of images matches expected #
+if X.shape == (img_size, num_img_total):
+    print('Part 1: Pass - Data loaded successfully with correct dimensions.')
+else:
+    print('Part 1: Fail - Data dimensions or loading process may have issues.')
+
 
 # 2 TODO: Generate matrix X
 
-
+# feature mean
+# X
 
 
 # 3 TODO: Compute SVD of X & plot singular values
