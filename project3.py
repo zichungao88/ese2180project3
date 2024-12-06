@@ -11,7 +11,7 @@ import os
 
 
 # 1 TODO: Download dataset & load training dataset
-# DONE (X vs img_matrix needs scrutiny)
+# DONE
 entities = ['centerlight', 'glasses', 'happy', 'leftlight', 'noglasses', 
             'normal', 'rightlight', 'sad', 'sleepy', 'surprised', 'wink']
 
@@ -23,7 +23,7 @@ img_height = 116
 img_width = 98
 img_size = img_height * img_width
 
-X = np.zeros((img_size, num_img_total)) # M x N
+img_matrix = np.zeros((img_size, num_img_total)) # M x N
 
 imgs = []
 for img in os.listdir('./unpadded'):
@@ -35,25 +35,30 @@ imgs.sort()
 
 for idx, img in enumerate(imgs):
     face = io.imread(os.path.join('./unpadded', img))
-    X[:, idx] = face.flatten()
-# print(X[0])
+    img_matrix[:, idx] = face.flatten()
+# print(img_matrix[0])
 
 # check if total # of images matches expected #
-if X.shape == (img_size, num_img_total):
+if img_matrix.shape == (img_size, num_img_total):
     print('Part 1: Pass - Data loaded successfully with correct dimensions.')
 else:
     print('Part 1: Fail - Data dimensions or loading process may have issues.')
 
 
 # 2 TODO: Generate matrix X
-
+# IN PROGRESS
 # feature mean
-# X
+X = img_matrix # cont w/ implementation
+
+if np.allclose(np.mean(X, axis=1), 0, atol=1e-6):
+    print('Part 2: Pass - Data matrix X is correctly mean-centered.')
+else:
+    print('Part 2: Fail - Data matrix X is not mean-centered properly.')
 
 
 # 3 TODO: Compute SVD of X & plot singular values
 
-
+U, S, Vt = np.linalg.svd(X)
 
 
 # 4 TODO: Limit # of features & plot og image w/ aforementioned features
