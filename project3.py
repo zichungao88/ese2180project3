@@ -26,7 +26,7 @@ img_size = img_height * img_width
 img_matrix = np.zeros((img_size, num_img_total)) # M x N
 
 imgs = []
-for img in os.listdir('./unpadded'):
+for img in os.listdir('./unpadded'): # use directory name directly
     if not(img.startswith('subject14') or img.startswith('subject15')): # only use 1st 13 for training
         imgs.append(img)
 imgs.sort()
@@ -46,9 +46,13 @@ else:
 
 
 # 2 TODO: Generate matrix X
-# IN PROGRESS
-# feature mean
-X = img_matrix # cont w/ implementation
+# DONE
+mean_vector = np.zeros((img_size, 1))
+for i in range(img_size):
+    mean = np.sum(img_matrix[i]) / num_img_total # mean value of each pixel
+    mean_vector[i] = mean
+
+X = img_matrix - np.matmul(mean_vector, np.ones((1, num_img_total))) # mean-subtracted matrix
 
 if np.allclose(np.mean(X, axis=1), 0, atol=1e-6):
     print('Part 2: Pass - Data matrix X is correctly mean-centered.')
@@ -57,7 +61,7 @@ else:
 
 
 # 3 TODO: Compute SVD of X & plot singular values
-
+# IN PROGRESS (cont from here)
 U, S, Vt = np.linalg.svd(X)
 
 
