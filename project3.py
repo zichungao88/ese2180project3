@@ -81,6 +81,15 @@ plt.grid()
 plt.savefig('singular_value.png')
 # plt.show()
 
+# # of principal components = r = # of nonzero singular values
+# must implement threshold to determine which values to not consider as singular values
+# since all diagonal entries of Matrix Sigma are nonzero but some are very very close to 0
+num_principal_component = 0
+for i in S:
+    if i >= 0.001: # self-defined hard-coded cutoff/threshold value
+        num_principal_component += 1
+# print(num_principal_component)
+
 # check shapes of U, S, & V transpose
 if np.shape(U) == (img_size, img_size) and np.shape(S) == (num_img_total,) and VT.shape == (num_img_total, num_img_total):
     print('Part 3: Pass - SVD computation completed with correct matrix dimensions.')
