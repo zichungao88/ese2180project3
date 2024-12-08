@@ -54,6 +54,12 @@ for i in range(img_size):
 
 X = img_matrix - np.matmul(mean_vector, np.ones((1, num_img_total))) # mean-subtracted matrix
 
+plt.imshow(mean_vector.reshape(img_height, img_width), cmap='gray')
+plt.title('Mean Image')
+plt.savefig('mean.png')
+# plt.show()
+
+# check if mean of columns of X is close to 0
 if np.allclose(np.mean(X, axis=1), 0, atol=1e-6):
     print('Part 2: Pass - Data matrix X is correctly mean-centered.')
 else:
@@ -61,8 +67,34 @@ else:
 
 
 # 3 TODO: Compute SVD of X & plot singular values
-# IN PROGRESS (cont from here)
-U, S, Vt = np.linalg.svd(X)
+# IN PROGRESS
+U, S, VT = np.linalg.svd(X)
+
+singular_value_index = np.arange(num_img_total)
+plt.figure() # new figure
+plt.scatter(singular_value_index, S, label='Singular Value', s=3) # relatively small dot size for readability
+plt.title('Singular Values of Matrix X')
+plt.xlabel('Image Number')
+plt.ylabel('Singular Value')
+plt.legend()
+plt.grid()
+plt.savefig('singular_value.png')
+# plt.show()
+
+# check shapes of U, S, & V transpose
+if np.shape(U) == (img_size, img_size) and np.shape(S) == (num_img_total,) and VT.shape == (num_img_total, num_img_total):
+    print('Part 3: Pass - SVD computation completed with correct matrix dimensions.')
+else:
+    print('Part 3: Fail - SVD matrix dimensions do not match expectations.')
+
+# check if cumulative variance sums to 1 (within numerical tolerance)
+singular_values_squared = S ** 2
+total_variance = np.sum(singular_values_squared)
+cumulative_variance = np.cumsum(singular_values_squared) / total_variance
+if np.isclose(cumulative_variance[-1], 1.0, atol=1e-6):
+    print('Part 3: Pass - Cumulative variance is correctly computed.')
+else:
+    print('Part 3: Fail - Cumulative variance computation may have issues.')
 
 
 # 4 TODO: Limit # of features & plot og image w/ aforementioned features
