@@ -52,7 +52,7 @@ for i in range(img_size):
     mean = np.sum(img_train_matrix[i]) / num_img_train # mean value of each pixel
     mean_vector[i] = mean
 
-X = img_train_matrix - np.matmul(mean_vector, np.ones((1, num_img_train))) # mean-subtracted matrix
+X = img_train_matrix - mean_vector @ np.ones((1, num_img_train)) # mean-subtracted matrix
 
 plt.imshow(mean_vector.reshape(img_height, img_width), cmap='gray')
 plt.title('Mean Image')
@@ -84,13 +84,13 @@ plt.savefig('singular_value.png')
 # # of principal components = r = # of nonzero singular values
 # must implement threshold to determine which values to not consider as singular values
 # since all diagonal entries of Matrix Sigma are nonzero but some are very very close to 0
-principal_components = []
+principal_components_train = []
 num_principal_component = 0
 for i in S:
     if i >= 0.001: # self-defined hard-coded cutoff/threshold value
-        principal_components.append(i)
+        principal_components_train.append(i)
         num_principal_component += 1
-principal_components = np.array(principal_components)
+principal_components_train = np.array(principal_components_train)
 # print(num_principal_component)
 # print(principal_components)
 
@@ -184,7 +184,7 @@ else:
 
 
 # 5 TODO: Test dataset
-# IN PROGRESS
+# DONE
 num_subject_test = 2
 num_img_test = num_subject_test * num_entity
 img_test_matrix = np.zeros((img_size, num_img_test))
@@ -201,6 +201,29 @@ for i, j in enumerate(imgs_test):
     face = io.imread(os.path.join('./unpadded', j))
     img_test_matrix[:, i] = face.flatten()
 # print(img_test_matrix[0])
+# print(np.shape(img_test_matrix))
+
+U50 = U[:, :50] # 1st 50 training features
+principal_components_test = np.transpose(U50) @ img_test_matrix
+# print(np.shape(principal_components_test))
+
+reconstructed_img_test = U50 @ principal_components_test # reconstruct using previously calculated feature values
+error_test = np.linalg.norm(img_test_matrix - reconstructed_img_test, 'fro') ** 2
+avg_approx_errors_test = np.mean(error_test)
+print('The average approximation error for the test set with 50 features is ' + str(np.rint(avg_approx_errors_test)) + '\n')
+
+sample_img_index_test = 0
+reconstructed_img_test_single = reconstructed_img_test[:, sample_img_index_test]
+
+plt.figure()
+plt.subplot(1, 2, 1)
+plt.imshow(img_test_matrix[:, sample_img_index_test].reshape(img_height, img_width), cmap='gray')
+plt.title('Original Test Image')
+plt.subplot(1, 2, 2)
+plt.imshow(reconstructed_img_test_single.reshape(img_height, img_width), cmap='gray')
+plt.title('Reconstructed Test Image with 50 Features')
+plt.savefig('reconstructed_test.png')
+# plt.show
 
 
 # 6 TODO: Repeat test w/ rotated image
