@@ -15,15 +15,15 @@ import os
 entities = ['centerlight', 'glasses', 'happy', 'leftlight', 'noglasses', 
             'normal', 'rightlight', 'sad', 'sleepy', 'surprised', 'wink']
 
-num_img_train = 13
+num_subject_train = 13
 num_entity = len(entities)
-num_img_total = num_img_train * num_entity
+num_img_train = num_subject_train * num_entity
 
 img_height = 116
 img_width = 98
 img_size = img_height * img_width
 
-img_matrix = np.zeros((img_size, num_img_total)) # M x N
+img_train_matrix = np.zeros((img_size, num_img_train)) # M x N
 
 imgs_train = []
 for i in os.listdir('./unpadded'): # use directory name directly
@@ -35,11 +35,11 @@ imgs_train.sort()
 
 for i, j in enumerate(imgs_train):
     face = io.imread(os.path.join('./unpadded', j))
-    img_matrix[:, i] = face.flatten()
+    img_train_matrix[:, i] = face.flatten()
 # print(img_matrix[0])
 
 # check if total # of images matches expected #
-if img_matrix.shape == (img_size, num_img_total):
+if img_train_matrix.shape == (img_size, num_img_train):
     print('Part 1: Pass - Data loaded successfully with correct dimensions.\n')
 else:
     print('Part 1: Fail - Data dimensions or loading process may have issues.\n')
@@ -49,10 +49,10 @@ else:
 # DONE
 mean_vector = np.zeros((img_size, 1))
 for i in range(img_size):
-    mean = np.sum(img_matrix[i]) / num_img_total # mean value of each pixel
+    mean = np.sum(img_train_matrix[i]) / num_img_train # mean value of each pixel
     mean_vector[i] = mean
 
-X = img_matrix - np.matmul(mean_vector, np.ones((1, num_img_total))) # mean-subtracted matrix
+X = img_train_matrix - np.matmul(mean_vector, np.ones((1, num_img_train))) # mean-subtracted matrix
 
 plt.imshow(mean_vector.reshape(img_height, img_width), cmap='gray')
 plt.title('Mean Image')
@@ -70,7 +70,7 @@ else:
 # DONE
 U, S, VT = np.linalg.svd(X)
 
-singular_value_index = np.arange(num_img_total)
+singular_value_index = np.arange(num_img_train)
 plt.figure() # new figure
 plt.scatter(singular_value_index, S, label='Singular Value', s=3) # relatively small dot size for readability
 plt.title('Singular Values of Matrix X')
@@ -119,14 +119,14 @@ print(str(capture80) + ' principal components are needed to capture 80% of the t
 print(str(capture90) + ' principal components are needed to capture 90% of the training image data')
 print(str(capture95) + ' principal components are needed to capture 95% of the training image data')
 
-storage_required_original = img_size * num_img_total # total entries of original matrix X
-storage_required90 = img_size * capture90 + capture90 ** 2 + capture90 * num_img_total # total entries reduced
+storage_required_original = img_size * num_img_train # total entries of original matrix X
+storage_required90 = img_size * capture90 + capture90 ** 2 + capture90 * num_img_train # total entries reduced
 storage_saved90 = (storage_required_original - storage_required90) / storage_required_original
 
 print('If we only need to recover 90% of the data, we can reduce the storage required by ' + str(f'{storage_saved90:.2%}' + '\n'))
 
 # check shapes of U, S, & V transpose
-if np.shape(U) == (img_size, img_size) and np.shape(S) == (num_img_total,) and VT.shape == (num_img_total, num_img_total):
+if np.shape(U) == (img_size, img_size) and np.shape(S) == (num_img_train,) and VT.shape == (num_img_train, num_img_train):
     print('Part 3: Pass - SVD computation completed with correct matrix dimensions.\n')
 else:
     print('Part 3: Fail - SVD matrix dimensions do not match expectations.\n')
@@ -148,7 +148,7 @@ def reconstruct(d):
     X_approx = U_d @ S_d @ VT_d # approximation using first d components
 
     error = np.linalg.norm(X - X_approx, 'fro') ** 2 # error computation
-    avg_approx_error = error / num_img_total
+    avg_approx_error = error / num_img_train
     print('The average approximation error for d = ' + str(d) + ' is ' + str(np.rint(avg_approx_error)))
 
     sample_img_index = 0 # select arbitrary sample image for reconstruction
@@ -156,7 +156,7 @@ def reconstruct(d):
 
     plt.figure()
     plt.subplot(1, 2, 1)
-    plt.imshow(img_matrix[:, sample_img_index].reshape(img_height, img_width), cmap='gray')
+    plt.imshow(img_train_matrix[:, sample_img_index].reshape(img_height, img_width), cmap='gray')
     plt.title('Original Image')
     plt.subplot(1, 2, 2)
     plt.imshow(reconstructed_img, cmap='gray')
@@ -170,8 +170,8 @@ error20 = reconstruct(20)
 error50 = reconstruct(50)
 error70 = reconstruct(70)
 error100 = reconstruct(100)
-reconstruct(num_img_total) # must be 0 (for sanity check)
-print('\n')
+reconstruct(num_img_train) # must be 0 (for sanity check)
+print('')
 
 # Note: we were originally unaware that the for loop given in the Jupyter Notebook was supposed to loop thru the 4 given values of d;
 # therefore, we initially implemented it differently but will now proceed to put the 4 avg_approx_error values into a list for P/F testing
@@ -185,7 +185,9 @@ else:
 
 # 5 TODO: Test dataset
 # IN PROGRESS
-# (cont)
+num_subject_test = 2
+num_img_test = num_subject_test * num_entity
+img_test_matrix = np.zeros((img_size, num_img_test))
 
 
 # 6 TODO: Repeat test w/ rotated image
