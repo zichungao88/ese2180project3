@@ -5,7 +5,7 @@ import os
 
 # Notes for ourselves:
 # x_i = each image
-# M = # of pixels i.e. length & width
+# M = # of pixels i.e. length * width
 # N = # of images (13 subjects for training * # of facial expressions & lighting conditions)
 # X = image matrix (M x N)
 
@@ -25,17 +25,17 @@ img_size = img_height * img_width
 
 img_matrix = np.zeros((img_size, num_img_total)) # M x N
 
-imgs = []
-for img in os.listdir('./unpadded'): # use directory name directly
-    if not(img.startswith('subject14') or img.startswith('subject15')): # only use 1st 13 for training
-        imgs.append(img)
-imgs.sort()
+imgs_train = []
+for i in os.listdir('./unpadded'): # use directory name directly
+    if not(i.startswith('subject14') or i.startswith('subject15')): # only use 1st 13 for training
+        imgs_train.append(i)
+imgs_train.sort()
 # for i in imgs:
 #     print(i)
 
-for idx, img in enumerate(imgs):
-    face = io.imread(os.path.join('./unpadded', img))
-    img_matrix[:, idx] = face.flatten()
+for i, j in enumerate(imgs_train):
+    face = io.imread(os.path.join('./unpadded', j))
+    img_matrix[:, i] = face.flatten()
 # print(img_matrix[0])
 
 # check if total # of images matches expected #
@@ -185,7 +185,7 @@ else:
 
 # 5 TODO: Test dataset
 # IN PROGRESS
-
+# (cont)
 
 
 # 6 TODO: Repeat test w/ rotated image
