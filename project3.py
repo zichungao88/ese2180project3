@@ -139,7 +139,7 @@ else:
 
 
 # 4 TODO: Limit # of features & plot og image w/ aforementioned features
-# IN PROGRESS
+# DONE
 
 def reconstruct(d):
     U_d = U[:, :d] # 1st d columns of U
@@ -164,16 +164,27 @@ def reconstruct(d):
     plt.savefig('reconstructed' + str(d) + '.png')
     # plt.show()
 
-reconstruct(20)
-reconstruct(50)
-reconstruct(70)
-reconstruct(100)
+    return avg_approx_error
+
+error20 = reconstruct(20)
+error50 = reconstruct(50)
+error70 = reconstruct(70)
+error100 = reconstruct(100)
 reconstruct(num_img_total) # must be 0 (for sanity check)
 print('\n')
 
+# Note: we were originally unaware that the for loop given in the Jupyter Notebook was supposed to loop thru the 4 given values of d;
+# therefore, we initially implemented it differently but will now proceed to put the 4 avg_approx_error values into a list for P/F testing
+avg_approx_errors = [error20, error50, error70, error100]
+tolerance = 1e-5
+if all(earlier >= later - tolerance for earlier, later in zip(avg_approx_errors, avg_approx_errors[1:])):
+    print('Part 4: Pass - Approximation error decreases as d increases (within tolerance).\n')
+else:
+    print('Part 4: Fail - Approximation error does not decrease as expected.\n')
+
 
 # 5 TODO: Test dataset
-
+# IN PROGRESS
 
 
 
