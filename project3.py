@@ -30,13 +30,13 @@ for i in os.listdir('./unpadded'): # use directory name directly
     if not(i.startswith('subject14') or i.startswith('subject15')): # only use 1st 13 for training
         imgs_train.append(i)
 imgs_train.sort()
-# for i in imgs:
+# for i in imgs_train:
 #     print(i)
 
 for i, j in enumerate(imgs_train):
     face = io.imread(os.path.join('./unpadded', j))
     img_train_matrix[:, i] = face.flatten()
-# print(img_matrix[0])
+# print(img_train_matrix[0])
 
 # check if total # of images matches expected #
 if img_train_matrix.shape == (img_size, num_img_train):
@@ -188,6 +188,19 @@ else:
 num_subject_test = 2
 num_img_test = num_subject_test * num_entity
 img_test_matrix = np.zeros((img_size, num_img_test))
+
+imgs_test = []
+for i in os.listdir('./unpadded'):
+    if i.startswith('subject14') or i.startswith('subject15'): # last 2 for testing
+        imgs_test.append(i)
+imgs_test.sort()
+# for i in imgs_test:
+#     print(i)
+
+for i, j in enumerate(imgs_test):
+    face = io.imread(os.path.join('./unpadded', j))
+    img_test_matrix[:, i] = face.flatten()
+# print(img_test_matrix[0])
 
 
 # 6 TODO: Repeat test w/ rotated image
