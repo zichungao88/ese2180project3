@@ -40,9 +40,9 @@ for idx, img in enumerate(imgs):
 
 # check if total # of images matches expected #
 if img_matrix.shape == (img_size, num_img_total):
-    print('Part 1: Pass - Data loaded successfully with correct dimensions.')
+    print('Part 1: Pass - Data loaded successfully with correct dimensions.\n')
 else:
-    print('Part 1: Fail - Data dimensions or loading process may have issues.')
+    print('Part 1: Fail - Data dimensions or loading process may have issues.\n')
 
 
 # 2 TODO: Generate matrix X
@@ -61,13 +61,13 @@ plt.savefig('mean.png')
 
 # check if mean of columns of X is close to 0
 if np.allclose(np.mean(X, axis=1), 0, atol=1e-6):
-    print('Part 2: Pass - Data matrix X is correctly mean-centered.')
+    print('Part 2: Pass - Data matrix X is correctly mean-centered.\n')
 else:
-    print('Part 2: Fail - Data matrix X is not mean-centered properly.')
+    print('Part 2: Fail - Data matrix X is not mean-centered properly.\n')
 
 
 # 3 TODO: Compute SVD of X & plot singular values
-# IN PROGRESS
+# DONE
 U, S, VT = np.linalg.svd(X)
 
 singular_value_index = np.arange(num_img_total)
@@ -94,22 +94,48 @@ principal_components = np.array(principal_components)
 # print(num_principal_component)
 # print(principal_components)
 
-pass
-
-# check shapes of U, S, & V transpose
-if np.shape(U) == (img_size, img_size) and np.shape(S) == (num_img_total,) and VT.shape == (num_img_total, num_img_total):
-    print('Part 3: Pass - SVD computation completed with correct matrix dimensions.')
-else:
-    print('Part 3: Fail - SVD matrix dimensions do not match expectations.')
-
-# check if cumulative variance sums to 1 (within numerical tolerance)
+# check how many principal components are needed to capture a certain amount of training image data
+# no need to recreate array w/ only principal components since singular values of 0 do not contribute to total variance
 singular_values_squared = S ** 2
 total_variance = np.sum(singular_values_squared)
 cumulative_variance = np.cumsum(singular_values_squared) / total_variance
-if np.isclose(cumulative_variance[-1], 1.0, atol=1e-6):
-    print('Part 3: Pass - Cumulative variance is correctly computed.')
+
+capture70 = 0
+capture80 = 0
+capture90 = 0
+capture95 = 0
+for i in range(len(cumulative_variance)):
+    if cumulative_variance[i] >= 0.95 and capture95 == 0:
+        capture95 = i + 1
+    elif cumulative_variance[i] >= 0.9 and capture90 == 0:
+        capture90 = i + 1
+    elif cumulative_variance[i] >= 0.8 and capture80 == 0:
+        capture80 = i + 1
+    elif cumulative_variance[i] >= 0.7 and capture70 == 0:
+        capture70 = i + 1
+
+print(str(capture70) + ' principal components are needed to capture 70% of the training image data')
+print(str(capture80) + ' principal components are needed to capture 80% of the training image data')
+print(str(capture90) + ' principal components are needed to capture 90% of the training image data')
+print(str(capture95) + ' principal components are needed to capture 95% of the training image data')
+
+storage_required_original = img_size * num_img_total # total entries of original matrix X
+storage_required90 = img_size * capture90 + capture90 ** 2 + capture90 * num_img_total # total entries reduced
+storage_saved90 = (storage_required_original - storage_required90) / storage_required_original
+
+print('If we only need to recover 90% of the data, we can reduce the storage required by ' + str(f'{storage_saved90:.2%}' + '\n'))
+
+# check shapes of U, S, & V transpose
+if np.shape(U) == (img_size, img_size) and np.shape(S) == (num_img_total,) and VT.shape == (num_img_total, num_img_total):
+    print('Part 3: Pass - SVD computation completed with correct matrix dimensions.\n')
 else:
-    print('Part 3: Fail - Cumulative variance computation may have issues.')
+    print('Part 3: Fail - SVD matrix dimensions do not match expectations.\n')
+
+# check if cumulative variance sums to 1 (within numerical tolerance)
+if np.isclose(cumulative_variance[-1], 1.0, atol=1e-6):
+    print('Part 3: Pass - Cumulative variance is correctly computed.\n')
+else:
+    print('Part 3: Fail - Cumulative variance computation may have issues.\n')
 
 
 # 4 TODO: Limit # of features & plot og image w/ aforementioned features
