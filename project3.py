@@ -221,9 +221,30 @@ plt.imshow(img_test_matrix[:, sample_img_index_test].reshape(img_height, img_wid
 plt.title('Original Test Image')
 plt.subplot(1, 2, 2)
 plt.imshow(reconstructed_img_test_single.reshape(img_height, img_width), cmap='gray')
-plt.title('Reconstructed Test Image with 50 Features')
+plt.title('Reconstructed Test Image \nw/ 50 Features')
 plt.savefig('reconstructed_test.png')
-# plt.show
+# plt.show()
 
 
 # 6 TODO: Repeat test w/ rotated image
+# DONE
+rotated_img = io.imread('subject15rotated.jpeg').flatten()
+# print(np.shape(rotated_img))
+
+principal_components_rotated = np.transpose(U50) @ rotated_img
+# print(np.shape(principal_components_rotated))
+
+reconstructed_img_rotated = U50 @ principal_components_rotated
+error_rotated = np.linalg.norm(rotated_img - reconstructed_img_rotated) ** 2
+avg_approx_errors_rotated = np.mean(error_rotated)
+print('The average approximation error for the rotated image with 50 features is ' + str(np.rint(avg_approx_errors_rotated)) + '\n')
+
+plt.figure()
+plt.subplot(1, 2, 1)
+plt.imshow(rotated_img.reshape(img_height, img_width), cmap='gray')
+plt.title('Original Rotated Image')
+plt.subplot(1, 2, 2)
+plt.imshow(reconstructed_img_rotated.reshape(img_height, img_width), cmap='gray')
+plt.title('Reconstructed Rotated Image \nw/ 50 Features')
+plt.savefig('reconstructed_rotated.png')
+# plt.show()
