@@ -139,8 +139,37 @@ else:
 
 
 # 4 TODO: Limit # of features & plot og image w/ aforementioned features
+# IN PROGRESS
 
+def reconstruct(d):
+    U_d = U[:, :d] # 1st d columns of U
+    S_d = np.diag(S[:d]) # 1st d singular values
+    VT_d = VT[:d, :] # 1st d rows of V transpose
+    X_approx = U_d @ S_d @ VT_d # approximation using first d components
 
+    error = np.linalg.norm(X - X_approx, 'fro') ** 2 # error computation
+    avg_approx_error = error / num_img_total
+    print('The average approximation error for d = ' + str(d) + ' is ' + str(np.rint(avg_approx_error)))
+
+    sample_img_index = 0 # select arbitrary sample image for reconstruction
+    reconstructed_img = X_approx[:, sample_img_index].reshape(img_height, img_width)
+
+    plt.figure()
+    plt.subplot(1, 2, 1)
+    plt.imshow(img_matrix[:, sample_img_index].reshape(img_height, img_width), cmap='gray')
+    plt.title('Original Image')
+    plt.subplot(1, 2, 2)
+    plt.imshow(reconstructed_img, cmap='gray')
+    plt.title('Reconstructed Image d = ' + str(d))
+    plt.savefig('reconstructed' + str(d) + '.png')
+    # plt.show()
+
+reconstruct(20)
+reconstruct(50)
+reconstruct(70)
+reconstruct(100)
+reconstruct(num_img_total) # must be 0 (for sanity check)
+print('\n')
 
 
 # 5 TODO: Test dataset
