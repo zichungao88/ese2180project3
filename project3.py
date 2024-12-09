@@ -209,7 +209,7 @@ principal_components_test = np.transpose(U50) @ img_test_matrix
 
 reconstructed_img_test = U50 @ principal_components_test # reconstruct using previously calculated feature values
 error_test = np.linalg.norm(img_test_matrix - reconstructed_img_test, 'fro') ** 2
-avg_approx_errors_test = np.mean(error_test)
+avg_approx_errors_test = error_test / num_img_test
 print('The average approximation error for the test set with 50 features is ' + str(np.rint(avg_approx_errors_test)) + '\n')
 
 sample_img_index_test = 0
@@ -235,9 +235,8 @@ principal_components_rotated = np.transpose(U50) @ rotated_img
 # print(np.shape(principal_components_rotated))
 
 reconstructed_img_rotated = U50 @ principal_components_rotated
-error_rotated = np.linalg.norm(rotated_img - reconstructed_img_rotated) ** 2
-avg_approx_errors_rotated = np.mean(error_rotated)
-print('The average approximation error for the rotated image with 50 features is ' + str(np.rint(avg_approx_errors_rotated)) + '\n')
+error_rotated = np.linalg.norm(rotated_img - reconstructed_img_rotated) ** 2 # no need to take average b/c only 1 image
+print('The approximation error for the rotated image with 50 features is ' + str(np.rint(error_rotated)) + '\n')
 
 plt.figure()
 plt.subplot(1, 2, 1)
